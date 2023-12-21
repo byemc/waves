@@ -1,0 +1,8 @@
+{
+  "short_name": "waves",
+  "name": "radio waves",
+  "id": "xyz.byemc.waves",
+  "start_url": "/?utm_source=homescreen",
+  "background_color": "#1f1f1f",
+  "theme_color": "#77B19D"
+}
