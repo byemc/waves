@@ -8,7 +8,7 @@
   "author": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "webpack serve --open --mode development --config webpack.config.dev.js",
+    "start": "live-server",
     "electron_start": "electron .",
     "build": "webpack --config webpack.config.prod.js"
   },
