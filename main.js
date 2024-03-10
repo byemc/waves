@@ -1,33 +1,38 @@
 const { app, BrowserWindow, ipcMain, Notification } = require("electron");
 const path = require('path');
-const Player = require('mpris-service');
+const Player = require("mpris-service");
 
-const player = Player({
-  name: "pirateradio",
-  identity: "Radio Player",
-  supportedInterfaces: ['player']
-});
+if (process.platform === "linux"){
+  const Player = require('mpris-service');
+  const player = Player({
+    name: "waves",
+    identity: "radio waves",
+    supportedInterfaces: ['player']
+  });
 
-player.canSeek = false;
-player.canGoNext = false;
-player.canGoPrevious = false;
+  player.canSeek = false;
+  player.canGoNext = false;
+  player.canGoPrevious = false;
+}
 
 function updatePlayer (event, args) {
   console.log(args)
-  player.metadata = {
-    'mpris:trackid': player.objectPath('track/') + args.id,
-    'mpris:length': args.duration * 1000 * 1000,
-    'mpris:artUrl': args.artUrl,
-    'xesam:title': args.title,
-    'xesam:album': args.album,
-    'xesam:artist': [args.artist]
-  };
+  if (process.platform === "linux") {
+    player.metadata = {
+      'mpris:trackid': player.objectPath('track/') + args.id,
+      'mpris:length': args.duration * 1000 * 1000,
+      'mpris:artUrl': args.artUrl,
+      'xesam:title': args.title,
+      'xesam:album': args.album,
+      'xesam:artist': [args.artist]
+    };
 
-  player.getPosition = function () {
-    return (Date.now() - args.startTime) * 1000
+    player.getPosition = function () {
+      return (Date.now() - args.startTime) * 1000
+    }
+
+    player.playbackStatus = args.playingStatus;
   }
-
-  player.playbackStatus = args.playingStatus;
 }
 
 
@@ -55,6 +60,8 @@ app.whenReady().then(() => {
   })
 })
 
-player.on('quit', function () {
-  app.exit();
-});
+if (process.platform === "linux") {
+  player.on('quit', function () {
+    app.exit();
+  });
+}

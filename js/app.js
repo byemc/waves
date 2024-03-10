@@ -7,8 +7,14 @@ console.debug(audioSource);
 
 // Important init stuff
 
-audioSource.src = "/assets/audio/noise.wav";
+audioSource.src = "assets/audio/noise.wav";
 let currentStation = null;
+
+runningInElectron = !!window.metadata;
+
+if (runningInElectron) {
+  console.error("Running under electron.")
+}
 
 // Play/Pause button
 
@@ -116,12 +122,66 @@ player.addEventListener('pause', function() {
 
 player.addEventListener('waiting', function() {
   console.log("Buffering...");
-  noise = new Audio("/assets/audio/noise.wav");
+  noise = new Audio("assets/audio/noise.wav");
   noise.play();
   noise.volume = 0.4;
   noise.loop = true;
   setPlayPauseButtonIcon("buffer");
 });
+
+// The following code handles giving browsers and operating systems media information
+async function updateMetadata(title="", artist="", album="radio waves", artUrl="https://radio.byemc.xyz/assets/icon-300.png", startTime=Date.now(), duration=0, playingStatus="Stopped", id = Math.floor(Math.random() * 1000)) {
+  // Double-check the inputs to make sure they arent undefined
+  if (!album) album = "radio waves";
+  if (!artUrl) artUrl = "https://radio.byemc.xyz/assets/icon-300.png";
+  if (!startTime) startTime = Date.now();
+  if (!duration) duration = 0;
+  if (!playingStatus) playingStatus = "Stopped";
+  if (!id) id = Math.floor(Math.random() * 1000);
+
+  // First the MediaMetadata API (covers every current browser [Chrome, Firefox and __ESPECIALLY__ iOS Safari])
+  if ("mediaSession" in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title,
+      artist,
+      album,
+      artwork: [
+        {
+          src: artUrl
+        }
+      ]
+    })
+
+    console.log({
+      duration: duration,
+      position: Math.round((Date.now() - startTime) / 1000),
+      playbackRate: 1
+    })
+
+    playingStatus = playingStatus !== "Playing" ? "paused" : "playing";
+    navigator.mediaSession.playbackState = playingStatus;
+    navigator.mediaSession.setPositionState({
+      duration: duration,
+      position: Math.round((Date.now() - startTime) / 1000),
+      playbackRate: 1
+    })
+
+    console.debug(navigator.mediaSession.playbackState);
+  }
+}
+
+const actionHandlers = [
+  ['play',          togglePlay],
+  ['pause',         togglePlay],
+];
+
+for (const [action, handler] of actionHandlers) {
+  try {
+    navigator.mediaSession.setActionHandler(action, handler);
+  } catch (error) {
+    console.log(`The media session action "${action}" is not supported yet.`);
+  }
+}
 
 // Read saved variables from localStorage
 function getLocalStorageItem (item, fallback = null) {
@@ -169,7 +229,7 @@ function removeStation(station) {
   renderStationListInTuner();
 }
 
-function tuneRadio(station={url:"/assets/audio/noise.wav"}) {
+function tuneRadio(station={url:"assets/audio/noise.wav"}) {
   player.pause();
   console.log(station)
   audioSource.src = station.url;
@@ -251,7 +311,6 @@ document.getElementById("add_azcast_search").addEventListener("click", _=>{
 
 
 
-
 // The following deals with routing between the different Views.
 
 const views = {
@@ -269,7 +328,6 @@ const viewFunctions = { // These run when a view is loaded.
 
     if (!currentStation) {
       stationThingy.innerHTML = `<span class="fa-fw fa-solid fa-warning"></span> Not tuned.`;
-      alert("You need to tune the radio first.");
       location.hash = "#tuner";
       return;
     }
@@ -280,12 +338,11 @@ const viewFunctions = { // These run when a view is loaded.
 
       stationThingy.innerHTML = `
     <h2>${json.name}</h2>
-    <code>${json.shortcode}</code>
+    <div class="info"><code>${json.shortcode}</code> / <span class="fa-fw fa-solid fa-people"></span> <span id="live_listeners"></span></div>
     <p>${json.description}</p>`
     } else {
       stationThingy.innerHTML = "Yeah this is icecast, metadata coming soon."
     }
-
   }
 }
 
@@ -335,6 +392,44 @@ function updateView() {
   selectedView.hidden = false;
   selectedView.ariaHidden = "false";
 }
+
+// Set an interval to poll the station for metadata
+async function getCurrentSongInfoFromAzuracastStation(server, shortcode) {
+
+  let response = await (await fetch(server + "/api/nowplaying/" + shortcode)).json();
+
+  let album;
+  if (response.now_playing.song.album) {
+    album = response.now_playing.song.album;
+  } else {
+    album = response.station.name;
+  }
+
+  document.getElementById("live_listeners").innerText = response.listeners.unique;
+
+  return {title: response.now_playing.song.title, artist: response.now_playing.song.artist, album: album,
+    art: response.now_playing.song.art, startTime: response.now_playing.played_at * 1000, duration: response.now_playing.duration}
+}
+
+async function getCurrentSongInfoFromIceCastStation(streamUrl) {
+  return;
+}
+
+setInterval(async function () {
+  let metadata = {}
+  if (!currentStation) {
+    await updateMetadata("Not tuned", "radio waves")
+    return;
+  }
+  if (currentStation.metadata_type === "azuracast") {
+    metadata = await getCurrentSongInfoFromAzuracastStation(currentStation.azuracast_server_url, currentStation.azuracast_station_shortcode);
+  } else {
+    metadata = await getCurrentSongInfoFromIceCastStation(currentStation.url);
+  }
+
+  await updateMetadata(metadata.title, metadata.artist, metadata.album, metadata.art, metadata.startTime, metadata.duration, "Playing");
+}, 3000)
+
 
 window.addEventListener("hashchange", updateView);
 updateView();
