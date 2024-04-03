@@ -3,6 +3,8 @@ const {app, BrowserWindow, ipcMain, Notification} = require("electron");
 const path = require("path");
 const Player =  require("@jellybrick/mpris-service");
 
+if (require('electron-squirrel-startup')) app.quit();
+
 let currentSong = {
   "title":  "",
   "artist": ""

@@ -12,7 +12,8 @@
     "electron_start": "ELECTRON_ENABLE_LOGGING=1 electron .",
     "build": "webpack --config webpack.config.prod.js",
     "package": "electron-forge package",
-    "make": "electron-forge make"
+    "make": "electron-forge make",
+    "publish": "electron-forge publish"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.3.1",
