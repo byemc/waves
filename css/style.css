@@ -244,3 +244,36 @@ input[type=text], input[type=url] {
   user-modify: not-allowed;
   user-focus: not-allowed;
 }
+
+.stack {
+  display: flex;
+  gap: 1rem;
+}
+
+.stack.v {
+  flex-direction: column;
+}
+
+.stack.h {
+  flex-direction: row;
+}
+
+.stack.nogap {
+  gap: 0;
+}
+
+.spacer { /* Empty element */
+  flex: 1;
+}
+
+img.rounded {
+  border-radius: 1rem;
+}
+
+img.appicon-settings {
+  height: 128px;
+}
+
+.title {
+  font-size: 1.5em;
+}

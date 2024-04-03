@@ -1,14 +1,26 @@
-const { app, BrowserWindow, ipcMain, Notification } = require("electron");
-const path = require('path');
-const Player = require("mpris-service");
+// import {app, BrowserWindow, ipcMain} from "electron";
+const {app, BrowserWindow, ipcMain, Notification} = require("electron");
+const path = require("path");
+const Player =  require("@jellybrick/mpris-service");
+
+let currentSong = {
+  "title":  "",
+  "artist": ""
+}
+
+let win;
+let player;
 
 if (process.platform === "linux"){
-  const Player = require('mpris-service');
-  const player = Player({
-    name: "waves",
-    identity: "radio waves",
-    supportedInterfaces: ['player']
-  });
+  player = new Player(
+    {
+      name: "waves",
+      identity: "waves",
+      supportedUriSchemes: [],
+      supportedMimeTypes: [],
+      supportedInterfaces: ['player']
+    }
+  );
 
   player.canSeek = false;
   player.canGoNext = false;
@@ -31,13 +43,28 @@ function updatePlayer (event, args) {
       return (Date.now() - args.startTime) * 1000
     }
 
+    // win.setProgressBar((Date.now() - args.startTime) / args.duration)
+    console.log((Date.now() - args.startTime) / args.duration)
+
     player.playbackStatus = args.playingStatus;
   }
+
+  console.error(args.title !== currentSong.title || args.artist !== currentSong.artist)
+  if (args.title !== currentSong.title || args.artist !== currentSong.artist) {
+    currentSong = {title: args.title, artist: args.artist}
+    new Notification(
+      {
+        title: args.title,
+        body:  args.artist
+      }
+    ).show()
+  }
+
 }
 
 
 function createWindow () {
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
 
@@ -48,6 +75,7 @@ function createWindow () {
     }
   })
 
+  win.setProgressBar(0.69)
 
   win.loadFile('index.html')
 }

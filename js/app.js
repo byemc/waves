@@ -93,6 +93,7 @@ function setPlayPauseButtonIcon(status="stopped") {
 
 function togglePlay() {
   if (player.paused) {
+    audioSource.src += "&nocache=" + Math.random();
     player.load();
     player.play();
     setPlayPauseButtonIcon("playing")
@@ -104,30 +105,7 @@ function togglePlay() {
 
 playPauseButton.addEventListener("click", togglePlay);
 
-// Give user feedback on buffering
 
-let noise = null;
-
-player.addEventListener('playing', function() {
-  console.log('Playback started.');
-  noise.pause();
-  noise = null;
-  setPlayPauseButtonIcon("playing");
-});
-
-player.addEventListener('pause', function() {
-  console.log('Playback paused.');
-  setPlayPauseButtonIcon("paused");
-});
-
-player.addEventListener('waiting', function() {
-  console.log("Buffering...");
-  noise = new Audio("assets/audio/noise.wav");
-  noise.play();
-  noise.volume = 0.4;
-  noise.loop = true;
-  setPlayPauseButtonIcon("buffer");
-});
 
 // The following code handles giving browsers and operating systems media information
 async function updateMetadata(title="", artist="", album="radio waves", artUrl="https://radio.byemc.xyz/assets/icon-300.png", startTime=Date.now(), duration=0, playingStatus="Stopped", id = Math.floor(Math.random() * 1000)) {
@@ -152,13 +130,7 @@ async function updateMetadata(title="", artist="", album="radio waves", artUrl="
       ]
     })
 
-    console.log({
-      duration: duration,
-      position: Math.round((Date.now() - startTime) / 1000),
-      playbackRate: 1
-    })
-
-    playingStatus = playingStatus !== "Playing" ? "paused" : "playing";
+    playingStatus = playingStatus.toLowerCase() !== "playing" ? "paused" : "playing"; // or this
     navigator.mediaSession.playbackState = playingStatus;
     navigator.mediaSession.setPositionState({
       duration: duration,
@@ -166,7 +138,9 @@ async function updateMetadata(title="", artist="", album="radio waves", artUrl="
       playbackRate: 1
     })
 
-    console.debug(navigator.mediaSession.playbackState);
+    document.getElementById("songtitle").innerText = title;
+    document.getElementById("songartist").innerText = artist
+
   }
 }
 
@@ -232,7 +206,7 @@ function removeStation(station) {
 function tuneRadio(station={url:"assets/audio/noise.wav"}) {
   player.pause();
   console.log(station)
-  audioSource.src = station.url;
+  audioSource.src = station.url + "?nocache=" + Math.random();
   currentStation = station;
   player.load();
   player.play();
@@ -336,10 +310,15 @@ const viewFunctions = { // These run when a view is loaded.
       let request = await fetch(currentStation.azuracast_server_url + `/api/station/${currentStation.azuracast_station_shortcode}`);
       let json = await request.json();
 
+      // TODO: Make this better
       stationThingy.innerHTML = `
     <h2>${json.name}</h2>
     <div class="info"><code>${json.shortcode}</code> / <span class="fa-fw fa-solid fa-people"></span> <span id="live_listeners"></span></div>
-    <p>${json.description}</p>`
+    <p>${json.description}</p>
+    <div class="chip">
+    <h2 id="songtitle"></h2>
+    <p id="songartist"></p>
+</div>`
     } else {
       stationThingy.innerHTML = "Yeah this is icecast, metadata coming soon."
     }
@@ -415,7 +394,7 @@ async function getCurrentSongInfoFromIceCastStation(streamUrl) {
   return;
 }
 
-setInterval(async function () {
+async function updateLoop() {
   let metadata = {}
   if (!currentStation) {
     await updateMetadata("Not tuned", "radio waves")
@@ -427,9 +406,40 @@ setInterval(async function () {
     metadata = await getCurrentSongInfoFromIceCastStation(currentStation.url);
   }
 
-  await updateMetadata(metadata.title, metadata.artist, metadata.album, metadata.art, metadata.startTime, metadata.duration, "Playing");
-}, 3000)
+  const isPlaying = player.paused ? "paused" : "playing";
+  await updateMetadata(metadata.title, metadata.artist, metadata.album, metadata.art, metadata.startTime, metadata.duration, isPlaying);
+}
 
+setInterval(updateLoop, 3000)
+
+// Give user feedback on buffering
+
+let noise = null;
+
+player.addEventListener('playing', function() {
+  console.log('Playback started.');
+  noise.pause();
+  noise = null;
+  setPlayPauseButtonIcon("playing");
+  updateLoop();
+});
+
+player.addEventListener('pause', function() {
+  console.log('Playback paused.');
+  setPlayPauseButtonIcon("paused");
+  updateLoop();
+
+});
+
+player.addEventListener('waiting', function() {
+  console.log("Buffering...");
+  noise = new Audio("assets/audio/noise.wav");
+  noise.play();
+  noise.volume = 0.4;
+  noise.loop = true;
+  setPlayPauseButtonIcon("buffer");
+
+});
 
 window.addEventListener("hashchange", updateView);
 updateView();
