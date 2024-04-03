@@ -9,8 +9,27 @@ module.exports = {
     {
       name: '@electron-forge/maker-zip',
       platforms: ['linux', 'win32'],
+    },
+    {
+      "name": "@electron-forge/maker-deb",
+      "config": {}
+    },
+    {
+      "name": "@electron-forge/maker-rpm",
+      "config": {}
     }
   ],
-  publishers: [],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'byemc',
+          name: 'waves'
+        },
+        prerelease: true
+      }
+    }
+  ],
   plugins: [],
 };
