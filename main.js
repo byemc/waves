@@ -43,7 +43,7 @@ function updatePlayer (event, args) {
       return (Date.now() - args.startTime) * 1000
     }
 
-    // win.setProgressBar((Date.now() - args.startTime) / args.duration)
+    win.setProgressBar((Date.now() - args.startTime) / args.duration)
     console.log((Date.now() - args.startTime) / args.duration)
 
     player.playbackStatus = args.playingStatus;
@@ -75,7 +75,7 @@ function createWindow () {
     }
   })
 
-  win.setProgressBar(0.69)
+  // win.setProgressBar(0.69)
 
   win.loadFile('index.html')
 }

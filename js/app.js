@@ -397,7 +397,7 @@ async function getCurrentSongInfoFromIceCastStation(streamUrl) {
 async function updateLoop() {
   let metadata = {}
   if (!currentStation) {
-    await updateMetadata("Not tuned", "radio waves")
+    await updateMetadata("Not tuned", "waves")
     return;
   }
   if (currentStation.metadata_type === "azuracast") {
