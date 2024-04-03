@@ -5,7 +5,13 @@ const player = document.getElementById("player");
 const audioSource = player.children.item(0);
 console.debug(audioSource);
 
+const currentSongTitle = document.getElementById("current-song-title");
+const currentSongArtist = document.getElementById("current-song-artist");
+const currentSongArt = document.getElementById("current-song-art");
+
 // Important init stuff
+
+let noise = null;
 
 audioSource.src = "assets/audio/noise.wav";
 let currentStation = null;
@@ -66,6 +72,10 @@ function setVolume (volume) {
   player.volume = volume / 100;
   controlVolume.value = volume;
   controlRealVolume.value = volume;
+
+  if (noise) {
+    noise.volume = (volume / 100) /4;
+  }
 }
 
 controlMute.addEventListener("click", toggleMute);
@@ -137,9 +147,6 @@ async function updateMetadata(title="", artist="", album="radio waves", artUrl="
       position: Math.round((Date.now() - startTime) / 1000),
       playbackRate: 1
     })
-
-    document.getElementById("songtitle").innerText = title;
-    document.getElementById("songartist").innerText = artist
 
   }
 }
@@ -301,7 +308,6 @@ const viewFunctions = { // These run when a view is loaded.
     const stationThingy = views['#station'];
 
     if (!currentStation) {
-      stationThingy.innerHTML = `<span class="fa-fw fa-solid fa-warning"></span> Not tuned.`;
       location.hash = "#tuner";
       return;
     }
@@ -310,15 +316,8 @@ const viewFunctions = { // These run when a view is loaded.
       let request = await fetch(currentStation.azuracast_server_url + `/api/station/${currentStation.azuracast_station_shortcode}`);
       let json = await request.json();
 
-      // TODO: Make this better
-      stationThingy.innerHTML = `
-    <h2>${json.name}</h2>
-    <div class="info"><code>${json.shortcode}</code> / <span class="fa-fw fa-solid fa-people"></span> <span id="live_listeners"></span></div>
-    <p>${json.description}</p>
-    <div class="chip">
-    <h2 id="songtitle"></h2>
-    <p id="songartist"></p>
-</div>`
+      document.getElementById("station_name").innerText = json.name;
+      document.getElementById("station_description").innerText = json.description;
     } else {
       stationThingy.innerHTML = "Yeah this is icecast, metadata coming soon."
     }
@@ -408,13 +407,15 @@ async function updateLoop() {
 
   const isPlaying = player.paused ? "paused" : "playing";
   await updateMetadata(metadata.title, metadata.artist, metadata.album, metadata.art, metadata.startTime, metadata.duration, isPlaying);
+
+  currentSongTitle.innerText = metadata.title;
+  currentSongArtist.innerText = metadata.artist;
+  currentSongArt.src          = metadata.art;
 }
 
 setInterval(updateLoop, 3000)
 
 // Give user feedback on buffering
-
-let noise = null;
 
 player.addEventListener('playing', function() {
   console.log('Playback started.');
@@ -435,7 +436,7 @@ player.addEventListener('waiting', function() {
   console.log("Buffering...");
   noise = new Audio("assets/audio/noise.wav");
   noise.play();
-  noise.volume = 0.4;
+  noise.volume = player.volume / 4;
   noise.loop = true;
   setPlayPauseButtonIcon("buffer");
 

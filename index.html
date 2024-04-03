@@ -75,7 +75,7 @@
         <a href="#add_station" class="button"><span class="fa-fw fa-solid fa-plus-circle"></span> Add a new station</a>
       </div>
 
-      <div class="stationList" id="tunerStationList">
+      <div class="stack v" id="tunerStationList">
 
       </div>
 
@@ -127,7 +127,7 @@
         <a href="#add_station">Add station manually</a>
       </div>
 
-      <label for="add_fromazcast_url">Azuracast Station URL</label>
+      <label for="add_fromazcast_url">Azuracast Server URL</label>
       <div id="add_azuracast_searcher" class="input_button_hybrid">
         <input type="url" placeholder="https://example.com" name="add_fromazcast_url" id="add_fromazcast_url">
         <button id="add_azcast_search"><span class="fa-fw fa-solid fa-search"></span> Search</button>
@@ -140,7 +140,34 @@
 
     <section id="station" hidden="hidden" aria-hidden="true">
 
+      <h2 id="station_name">Loading...</h2>
+      <div id="station_info" class="info"><span class="fa-fw fa-solid fa-headphones"></span> <span id="live_listeners">0</span></div>
+      <p id="station_description"></p>
+
+      <div class="stack v">
+        <div class="chip song nowplaying stack h">
+          <img src="img/radio-icon.png" alt="No album art" class="rounded" id="current-song-art">
+          <div class="stack v nogap justify-center">
+            <span class="subtitle">Now playing:</span>
+            <span id="current-song-title" class="title">Loading...</span>
+            <span id="current-song-artist" class="artist">Loading...</span>
+          </div>
+        </div>
+
+        <div class="ship song compact nextup stack h">
+          <img src="img/radio-icon.png" alt="No album art" class="rounded" id="next-song-art">
+          <div class="stack v nogap justify-center">
+            <span class="subtitle">Next up:</span>
+            <span id="next-song-title" class="title">Loading...</span>
+            <span id="next-song-artist" class="artist">Loading...</span>
+            <span id="next-song-until" class="subtitle">in 3 minutes</span>
+          </div>
+        </div>
+      </div>
+
     </section>
+
+
     <section id="settings" hidden="hidden" aria-hidden="true">
       <h2>Settings</h2>
 
