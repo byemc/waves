@@ -5,9 +5,16 @@ const player = document.getElementById("player");
 const audioSource = player.children.item(0);
 console.debug(audioSource);
 
-const currentSongTitle = document.getElementById("current-song-title");
-const currentSongArtist = document.getElementById("current-song-artist");
-const currentSongArt = document.getElementById("current-song-art");
+let currentSongTitle = document.getElementById("current-song-title");
+let currentSongArtist = document.getElementById("current-song-artist");
+let currentSongArt = document.getElementById("current-song-art");
+let currentSongElapsed = document.getElementById("elapsed");
+let currentSongDuration = document.getElementById("duration");
+let currentSongProgress = document.getElementById("progress")
+
+const nextSongTitle = document.getElementById("next-song-title");
+const nextSongArtist = document.getElementById("next-song-artist");
+const nextSongArt = document.getElementById("next-song-art");
 
 // Important init stuff
 
@@ -17,6 +24,7 @@ audioSource.src = "assets/audio/noise.wav";
 let currentStation = null;
 
 runningInElectron = !!window.metadata;
+
 
 if (runningInElectron) {
   console.error("Running under electron.")
@@ -105,7 +113,6 @@ function togglePlay() {
   if (player.paused) {
     audioSource.src += "&nocache=" + Math.random();
     player.load();
-    player.play();
     setPlayPauseButtonIcon("playing")
   } else {
     player.pause();
@@ -115,11 +122,23 @@ function togglePlay() {
 
 playPauseButton.addEventListener("click", togglePlay);
 
+player.addEventListener("loadeddata", _ =>{
+  console.debug("Loading started.")
+  player.play()
+});
 
+
+function convertSecondsToMinutes(secs) {
+  const minutes = Math.floor(secs / 60);
+  const seconds = secs - minutes * 60;
+  return `${minutes}:${seconds}`
+}
 
 // The following code handles giving browsers and operating systems media information
-async function updateMetadata(title="", artist="", album="radio waves", artUrl="https://radio.byemc.xyz/assets/icon-300.png", startTime=Date.now(), duration=0, playingStatus="Stopped", id = Math.floor(Math.random() * 1000)) {
+async function updateMetadata(title="", artist="", album="radio waves", artUrl="https://radio.byemc.xyz/assets/icon-300.png", startTime=Date.now(), duration=0, playingStatus="Stopped", elapsed=0, id = Math.floor(Math.random() * 1000)) {
   // Double-check the inputs to make sure they arent undefined
+  console.debug("Elapsed: ", elapsed)
+
   if (!album) album = "radio waves";
   if (!artUrl) artUrl = "https://radio.byemc.xyz/assets/icon-300.png";
   if (!startTime) startTime = Date.now();
@@ -142,11 +161,29 @@ async function updateMetadata(title="", artist="", album="radio waves", artUrl="
 
     playingStatus = playingStatus.toLowerCase() !== "playing" ? "paused" : "playing"; // or this
     navigator.mediaSession.playbackState = playingStatus;
-    navigator.mediaSession.setPositionState({
-      duration: duration,
-      position: Math.round((Date.now() - startTime) / 1000),
-      playbackRate: 1
-    })
+
+    currentSongDuration.innerText = `${convertSecondsToMinutes(duration)}`
+    currentSongProgress.max = (duration * 1000);
+    currentSongProgress.dataset.duration = duration;
+    currentSongProgress.dataset.startTime = startTime;
+    currentSongProgress.value = Date.now() - startTime
+
+    if (elapsed) {
+      navigator.mediaSession.setPositionState({
+        duration: duration,
+        position: elapsed,
+        playbackRate: 1
+      })
+      currentSongProgress.dataset.offset = Math.round(elapsed - ((Date.now() - startTime) / 1000))
+      currentSongElapsed.innerText = `${convertSecondsToMinutes(elapsed)}`;
+    } else {
+      navigator.mediaSession.setPositionState({
+        duration: duration,
+        position: Math.min(Math.round((Date.now() - startTime) / 1000), duration),
+        playbackRate: 1
+      })
+      currentSongElapsed.innerText = `${convertSecondsToMinutes(Math.min(Math.round((Date.now() - startTime) / 1000), duration))}`;
+    }
 
   }
 }
@@ -216,7 +253,6 @@ function tuneRadio(station={url:"assets/audio/noise.wav"}) {
   audioSource.src = station.url + "?nocache=" + Math.random();
   currentStation = station;
   player.load();
-  player.play();
 
   location.hash = "#station";
 }
@@ -299,6 +335,7 @@ const views = {
   "#add_station": document.getElementById("add_station"),
   "#add_station_from_azuracast": document.getElementById("add_station_from_azuracast"),
   "#station": document.getElementById("station"),
+  "#fullscreen": document.getElementById("fullscreen"),
   "#settings": document.getElementById("settings"),
 };
 
@@ -312,6 +349,13 @@ const viewFunctions = { // These run when a view is loaded.
       return;
     }
 
+    currentSongTitle = document.getElementById("current-song-title");
+    currentSongArtist = document.getElementById("current-song-artist");
+    currentSongArt = document.getElementById("current-song-art");
+    currentSongElapsed = document.getElementById("elapsed");
+    currentSongDuration = document.getElementById("duration");
+    currentSongProgress = document.getElementById("progress");
+
     if (currentStation.metadata_type === "azuracast") {
       let request = await fetch(currentStation.azuracast_server_url + `/api/station/${currentStation.azuracast_station_shortcode}`);
       let json = await request.json();
@@ -321,6 +365,16 @@ const viewFunctions = { // These run when a view is loaded.
     } else {
       stationThingy.innerHTML = "Yeah this is icecast, metadata coming soon."
     }
+  },
+  "#fullscreen": async function () {
+    currentSongTitle = document.getElementById("full-current-song-title");
+    currentSongArtist = document.getElementById("full-current-song-artist");
+    currentSongArt = document.getElementById("full-current-song-art");
+    currentSongElapsed = document.getElementById("full-elapsed");
+    currentSongDuration = document.getElementById("full-duration");
+    currentSongProgress = document.getElementById("full-progress");
+
+    await updateLoop();
   }
 }
 
@@ -374,7 +428,7 @@ function updateView() {
 // Set an interval to poll the station for metadata
 async function getCurrentSongInfoFromAzuracastStation(server, shortcode) {
 
-  let response = await (await fetch(server + "/api/nowplaying/" + shortcode)).json();
+  let response = await (await fetch(server + "/api/nowplaying/" + shortcode + "?nocache=" + Math.random())).json();
 
   let album;
   if (response.now_playing.song.album) {
@@ -383,10 +437,47 @@ async function getCurrentSongInfoFromAzuracastStation(server, shortcode) {
     album = response.station.name;
   }
 
-  document.getElementById("live_listeners").innerText = response.listeners.unique;
+  try {
+    nextSongTitle.innerText = response.playing_next.song.title;
+    nextSongArtist.innerText = response.playing_next.song.artist;
+    nextSongArt.src = response.playing_next.song.art;
+
+
+    document.getElementById("live_listeners").innerText = response.listeners.unique;
+    const history = document.getElementById("history");
+    history.innerText = "";
+    for (let song of response.song_history) {
+      const div = document.createElement("div");
+      div.classList = "chip compact song stack h";
+      const img = document.createElement("img");
+      img.classList = "rounded"
+      img.src = song.song.art;
+      const stack = document.createElement("div");
+      stack.classList = "stack v nogap justify-center";
+
+      //Strings
+      const title = document.createElement("span");
+      const artist = document.createElement("span");
+      const timeSince = document.createElement("span");
+
+      title.innerText = song.song.title;
+      artist.innerText = song.song.artist;
+      timeSince.innerText = ""
+
+      stack.append(title, artist, timeSince);
+
+      div.appendChild(img);
+      div.appendChild(stack);
+      history.appendChild(div)
+    }
+  } catch (e) {
+    console.error(e)
+  }
+
 
   return {title: response.now_playing.song.title, artist: response.now_playing.song.artist, album: album,
-    art: response.now_playing.song.art, startTime: response.now_playing.played_at * 1000, duration: response.now_playing.duration}
+    art: response.now_playing.song.art, startTime: response.now_playing.played_at * 1000, duration: response.now_playing.duration,
+    elapsed: response.now_playing.elapsed}
 }
 
 async function getCurrentSongInfoFromIceCastStation(streamUrl) {
@@ -406,20 +497,34 @@ async function updateLoop() {
   }
 
   const isPlaying = player.paused ? "paused" : "playing";
-  await updateMetadata(metadata.title, metadata.artist, metadata.album, metadata.art, metadata.startTime, metadata.duration, isPlaying);
+  await updateMetadata(metadata.title, metadata.artist, metadata.album, metadata.art, metadata.startTime, metadata.duration, isPlaying,  metadata.elapsed);
 
   currentSongTitle.innerText = metadata.title;
   currentSongArtist.innerText = metadata.artist;
   currentSongArt.src          = metadata.art;
 }
 
-setInterval(updateLoop, 3000)
+setInterval(updateLoop, 3000);
+
+async function updateProgressBars() {
+  try {
+    currentSongProgress.value = Date.now() - currentSongProgress.dataset.startTime;
+
+  } catch (e) {
+    currentSongProgress.value = 0
+  }
+  currentSongElapsed.innerText = convertSecondsToMinutes(Math.round(((Date.now() - currentSongProgress.dataset.startTime) / 1000)) + Number(currentSongProgress.dataset.offset))
+}
+
+setInterval(updateProgressBars, 500);
 
 // Give user feedback on buffering
 
 player.addEventListener('playing', function() {
   console.log('Playback started.');
-  noise.pause();
+  if (noise !== null) {
+    noise.pause();
+  }
   noise = null;
   setPlayPauseButtonIcon("playing");
   updateLoop();
@@ -435,7 +540,11 @@ player.addEventListener('pause', function() {
 player.addEventListener('waiting', function() {
   console.log("Buffering...");
   noise = new Audio("assets/audio/noise.wav");
-  noise.play();
+  try {
+    noise.play();
+  } catch (e) {
+    console.error(e);
+  }
   noise.volume = player.volume / 4;
   noise.loop = true;
   setPlayPauseButtonIcon("buffer");

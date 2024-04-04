@@ -147,10 +147,17 @@
       <div class="stack v">
         <div class="chip song nowplaying stack h">
           <img src="img/radio-icon.png" alt="No album art" class="rounded" id="current-song-art">
-          <div class="stack v nogap justify-center">
+          <div class="stack v fw nogap justify-center">
             <span class="subtitle">Now playing:</span>
             <span id="current-song-title" class="title">Loading...</span>
             <span id="current-song-artist" class="artist">Loading...</span>
+            <div class="stack hw npgap v">
+              <progress id="progress"></progress>
+              <div class="stack fw nogap align-space-between h">
+                <span id="elapsed">0:00</span>
+                <span id="duration">0:00</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -165,6 +172,10 @@
         </div>
       </div>
 
+      <h2 style="margin: 0.5rem 0">History</h2>
+      <div id="history" class="stack v">
+        No history :(
+      </div>
     </section>
 
 
@@ -182,6 +193,30 @@
             <span class="spacer"></span>
           </div>
         </div>
+
+      </div>
+
+    </section>
+
+    <section id="fullscreen" hidden="hidden" aria-hidden="true" >
+      <div class="stack spacer fh align-center">
+        <div class="stack v align-center spacer">
+          <img src="img/radio-icon.png" alt="No album art" class="rounded fw" id="full-current-song-art">
+          <div class="stack v fw nogap align-center text-align-center">
+            <span class="subtitle">Now playing:</span>
+            <span id="full-current-song-title" class="title">Loading...</span>
+            <span id="full-current-song-artist" class="artist">Loading...</span>
+            <div class="stack hw npgap v">
+              <div class="stack fw nogap align-space-between h">
+                <span id="full-elapsed">0:00</span>
+                <span id="full-duration">0:00</span>
+              </div>
+              <progress id="full-progress"></progress>
+            </div>
+          </div>
+        </div>
+
+        <div class="spacer"></div>
 
       </div>
 
