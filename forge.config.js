@@ -11,12 +11,12 @@ module.exports = {
       platforms: ['linux', 'win32'],
     },
     {
-      "name": "@electron-forge/maker-deb",
+      name: "@electron-forge/maker-deb",
       "config": {}
     },
     {
-      "name": "@electron-forge/maker-rpm",
-      "config": {}
+      name: "@electron-forge/maker-rpm",
+      config: {}
     }
   ],
   publishers: [
