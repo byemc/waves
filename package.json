@@ -8,7 +8,7 @@
   "author": "Bye <bye@byecorps.com>",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron-forge start",
+    "start": "live-server",
     "electron_start": "ELECTRON_ENABLE_LOGGING=1 electron .",
     "build": "webpack --config webpack.config.prod.js",
     "package": "electron-forge package",
@@ -24,13 +24,8 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.3.1",
     "@electron-forge/plugin-fuses": "^7.3.1",
     "@electron-forge/publisher-github": "^7.3.1",
-    "copy-webpack-plugin": "^11.0.0",
     "electron": "^29.1.1",
-    "html-webpack-plugin": "^5.5.3",
-    "webpack": "^5.88.2",
-    "webpack-cli": "^5.1.4",
-    "webpack-dev-server": "^4.15.1",
-    "webpack-merge": "^5.9.0"
+    "live-server": "^1.2.2"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.5.1",
