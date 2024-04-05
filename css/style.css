@@ -350,6 +350,7 @@ img.appicon-settings {
 
 }
 
+
 @media (prefers-color-scheme: light) {
   input[type=text], input[type=url] {
     background: var(--gray-1);

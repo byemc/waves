@@ -131,7 +131,7 @@ player.addEventListener("loadeddata", _ =>{
 function convertSecondsToMinutes(secs) {
   const minutes = Math.floor(secs / 60);
   const seconds = secs - minutes * 60;
-  return `${minutes}:${seconds}`
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`
 }
 
 // The following code handles giving browsers and operating systems media information
@@ -162,27 +162,40 @@ async function updateMetadata(title="", artist="", album="radio waves", artUrl="
     playingStatus = playingStatus.toLowerCase() !== "playing" ? "paused" : "playing"; // or this
     navigator.mediaSession.playbackState = playingStatus;
 
-    currentSongDuration.innerText = `${convertSecondsToMinutes(duration)}`
-    currentSongProgress.max = (duration * 1000);
-    currentSongProgress.dataset.duration = duration;
-    currentSongProgress.dataset.startTime = startTime;
-    currentSongProgress.value = Date.now() - startTime
 
-    if (elapsed) {
-      navigator.mediaSession.setPositionState({
-        duration: duration,
-        position: elapsed,
-        playbackRate: 1
-      })
-      currentSongProgress.dataset.offset = Math.round(elapsed - ((Date.now() - startTime) / 1000))
-      currentSongElapsed.innerText = `${convertSecondsToMinutes(elapsed)}`;
+    if (duration === Infinity) {
+      currentSongProgress.hidden = true;
+      currentSongElapsed.hidden = true;
+      currentSongDuration.innerText = "Live";
     } else {
-      navigator.mediaSession.setPositionState({
-        duration: duration,
-        position: Math.min(Math.round((Date.now() - startTime) / 1000), duration),
-        playbackRate: 1
-      })
-      currentSongElapsed.innerText = `${convertSecondsToMinutes(Math.min(Math.round((Date.now() - startTime) / 1000), duration))}`;
+      currentSongProgress.hidden = false;
+      currentSongElapsed.hidden = false;
+
+      currentSongProgress.max = (duration * 1000);
+      currentSongProgress.dataset.duration = duration;
+      currentSongProgress.dataset.startTime = startTime;
+      if (!currentSongProgress.dataset.offset) {
+        currentSongProgress.dataset.offset = 0;
+      }
+      currentSongProgress.value = (Date.now() - startTime) + (Number(currentSongProgress.dataset.offset) * 1000);
+
+      if (elapsed) {
+        navigator.mediaSession.setPositionState({
+          duration: duration,
+          position: elapsed,
+          playbackRate: 1
+        })
+        currentSongProgress.dataset.offset = Math.round(elapsed - ((Date.now() - startTime) / 1000))
+        currentSongElapsed.innerText = `${convertSecondsToMinutes(elapsed)}`;
+      } else {
+        navigator.mediaSession.setPositionState({
+          duration: duration,
+          position: Math.min(Math.round((Date.now() - startTime) / 1000), duration),
+          playbackRate: 1
+        })
+        currentSongElapsed.innerText = `${convertSecondsToMinutes(Math.min(Math.round((Date.now() - startTime) / 1000), duration))}`;
+      }
+      currentSongDuration.innerText = `${convertSecondsToMinutes(duration)}`
     }
 
   }
@@ -362,8 +375,27 @@ const viewFunctions = { // These run when a view is loaded.
 
       document.getElementById("station_name").innerText = json.name;
       document.getElementById("station_description").innerText = json.description;
+
+      document.getElementById("nextup").hidden = false;
+      document.getElementById("nextup").removeAttribute("style");
+
+      document.getElementById("history").hidden = false;
+      document.getElementById("history").removeAttribute("style");
+
+      document.getElementById("history-title").hidden = false;
+      document.getElementById("history-title").removeAttribute("style");
     } else {
-      stationThingy.innerHTML = "Yeah this is icecast, metadata coming soon."
+      document.getElementById("station_name").innerText = currentStation.name;
+      document.getElementById("station_description").innerText = currentStation.url;
+
+      document.getElementById("nextup").hidden = true;
+      document.getElementById("nextup").style.display = "none";
+
+      document.getElementById("history").hidden = true;
+      document.getElementById("history").style.display = "none";
+
+      document.getElementById("history-title").hidden = true;
+      document.getElementById("history-title").style.display = "none";
     }
   },
   "#fullscreen": async function () {
@@ -481,7 +513,7 @@ async function getCurrentSongInfoFromAzuracastStation(server, shortcode) {
 }
 
 async function getCurrentSongInfoFromIceCastStation(streamUrl) {
-  return;
+  return {title: currentStation.name, artist: "", duration: Infinity, startTime: 0, art: "img/radio-icon.png"};
 }
 
 async function updateLoop() {
@@ -490,6 +522,7 @@ async function updateLoop() {
     await updateMetadata("Not tuned", "waves")
     return;
   }
+
   if (currentStation.metadata_type === "azuracast") {
     metadata = await getCurrentSongInfoFromAzuracastStation(currentStation.azuracast_server_url, currentStation.azuracast_station_shortcode);
   } else {
@@ -508,7 +541,7 @@ setInterval(updateLoop, 3000);
 
 async function updateProgressBars() {
   try {
-    currentSongProgress.value = Date.now() - currentSongProgress.dataset.startTime;
+    currentSongProgress.value = (Date.now() - currentSongProgress.dataset.startTime) + (Number(currentSongProgress.dataset.offset) * 1000);
 
   } catch (e) {
     currentSongProgress.value = 0
