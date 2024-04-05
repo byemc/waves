@@ -27,7 +27,8 @@ module.exports = {
           owner: 'byemc',
           name: 'waves'
         },
-        prerelease: true
+        prerelease: true,
+        draft: false
       }
     }
   ],
