@@ -1,0 +1,11 @@
+{
+  "name": "waves",
+  "version": "5.0.0",
+  "description": "radio playing library for node js",
+  "repository": {
+    "type": "git",
+    "url": "https://shinonome.rocks/bye/waves"
+  },
+  "license": "UNLICENSED",
+  "author": "Bye <bye@byecorps.com> (https://byemc.xyz)"
+}
