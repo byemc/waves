@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dc2eda89-ce72-4bfb-9c82-f9fb4ab5dde0" name="Changes" comment="Lets start over. (Not bumping version because thats stupid)" />
+    <list default="true" id="dc2eda89-ce72-4bfb-9c82-f9fb4ab5dde0" name="Changes" comment="Add NPM boilerplate">
+      <change afterPath="$PROJECT_DIR$/waves/examples/assets/noise.wav" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/waves/examples/embed_basic.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/waves/examples/player_basic.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/waves/src/embed.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/waves/src/station.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/waves/src/waves.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -16,6 +24,7 @@
         <option value="CSS File" />
         <option value="SCSS File" />
         <option value="JavaScript File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -27,6 +36,22 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitLabMergeRequestFiltersHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPENED",
+    "assignee": {
+      "type": "org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue",
+      "username": "bye",
+      "fullname": "Bye"
+    }
+  }
+}]]></component>
+  <component name="GitLabMergeRequestsSettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "first": "https://shinonome.rocks/bye/waves.git",
+    "second": "348e169e-b102-4043-9c6f-b59fa6d1c8d2"
+  }
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 0
 }</component>
@@ -38,10 +63,11 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/shop/code/waves&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/shop/code/waves/waves/src/assets&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;SCSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -57,9 +83,11 @@
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/waves/src/assets" />
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/waves/examples" />
       <recent name="$PROJECT_DIR$/public" />
       <recent name="$PROJECT_DIR$/src" />
       <recent name="$PROJECT_DIR$" />
@@ -120,7 +148,8 @@
       <workItem from="1740323680481" duration="8000" />
       <workItem from="1741975972036" duration="5487000" />
       <workItem from="1742126058949" duration="567000" />
-      <workItem from="1742499282237" duration="423000" />
+      <workItem from="1742499282237" duration="6271000" />
+      <workItem from="1742575186970" duration="7655000" />
     </task>
     <task id="LOCAL-00001" summary="Lets start over. (Not bumping version because thats stupid)">
       <option name="closed" value="true" />
@@ -130,7 +159,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742499316615</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Add NPM boilerplate">
+      <option name="closed" value="true" />
+      <created>1742499870306</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1742499870306</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -149,6 +186,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Lets start over. (Not bumping version because thats stupid)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Lets start over. (Not bumping version because thats stupid)" />
+    <MESSAGE value="Add NPM boilerplate" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add NPM boilerplate" />
   </component>
 </project>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>waves ~ basic player</title>
+</head>
+<body>
+    <script type="module">
+        import Waves from "../src/waves.js";
+        import {URLStation} from "../src/station.js";
+
+        const waves = new Waves();
+        waves.loadingSoundElem.src = "./assets/noise.wav";
+        waves.loadingSoundElem.load();
+
+        const testStation = new URLStation("tilde", "https://tilde.radikan.byecorps.net/listen/tilde/radio.mp3");
+        waves.addStation(testStation);
+
+        waves.setStation("tilde");
+        waves.play();
+    </script>
+</body>
+</html>
