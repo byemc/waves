@@ -103,7 +103,7 @@ class Waves extends EventTarget {
 
     setStation(station, preventAutoPlay=false) {
         this.currentStation.stop();
-        this.loadingSound.play();
+        if (!preventAutoPlay) this.loadingSound.play();
 
         if (!this.stations[station]) {
             throw ReferenceError("Station not found.");
