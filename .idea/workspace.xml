@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dc2eda89-ce72-4bfb-9c82-f9fb4ab5dde0" name="Changes" comment="A somewhat working player!">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    <list default="true" id="dc2eda89-ce72-4bfb-9c82-f9fb4ab5dde0" name="Changes" comment="BUGFIX: if preventAutoPlay is true, don't play the loading sound.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/waves/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/waves/package.json" afterDir="false" />
     </list>
@@ -149,7 +147,9 @@
       <workItem from="1742575186970" duration="8123000" />
       <workItem from="1743364249485" duration="16000" />
       <workItem from="1743776325534" duration="22032000" />
-      <workItem from="1743849081632" duration="4730000" />
+      <workItem from="1743849081632" duration="5697000" />
+      <workItem from="1743878699986" duration="10000" />
+      <workItem from="1743879370291" duration="82000" />
     </task>
     <task id="LOCAL-00001" summary="Lets start over. (Not bumping version because thats stupid)">
       <option name="closed" value="true" />
@@ -183,7 +183,23 @@
       <option name="project" value="LOCAL" />
       <updated>1743851316301</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="A somewhat working player!">
+      <option name="closed" value="true" />
+      <created>1743854733904</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1743854733904</updated>
+    </task>
+    <task id="LOCAL-00006" summary="BUGFIX: if preventAutoPlay is true, don't play the loading sound.">
+      <option name="closed" value="true" />
+      <created>1743879412176</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1743879412176</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -204,7 +220,9 @@
     <MESSAGE value="Lets start over. (Not bumping version because thats stupid)" />
     <MESSAGE value="Add NPM boilerplate" />
     <MESSAGE value="We're playing audio!!!" />
-    <MESSAGE value="A somewhat working player!" />
-    <option name="LAST_COMMIT_MESSAGE" value="A somewhat working player!" />
+    <MESSAGE value="Misc repo stuff" />
+    <MESSAGE value="Misc repo stuff" />
+    <MESSAGE value="BUGFIX: if preventAutoPlay is true, don't play the loading sound." />
+    <option name="LAST_COMMIT_MESSAGE" value="BUGFIX: if preventAutoPlay is true, don't play the loading sound." />
   </component>
 </project>
