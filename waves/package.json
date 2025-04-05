@@ -1,6 +1,6 @@
 {
-  "name": "waves",
-  "version": "5.0.0",
+  "name": "@byemc/waves",
+  "version": "5.0.0-superduperalpha-1",
   "description": "radio playing library for node js",
   "repository": {
     "type": "git",

@@ -4,17 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dc2eda89-ce72-4bfb-9c82-f9fb4ab5dde0" name="Changes" comment="We're playing audio!!!">
-      <change afterPath="$PROJECT_DIR$/waves/examples/hls.test.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/waves/src/misc/sorting.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/waves/src/sources/radio-browser.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/waves/src/sources/rteProvider.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/waves/src/sources/searchProvider.js" afterDir="false" />
+    <list default="true" id="dc2eda89-ce72-4bfb-9c82-f9fb4ab5dde0" name="Changes" comment="A somewhat working player!">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/waves/examples/player_basic.html" beforeDir="false" afterPath="$PROJECT_DIR$/waves/examples/player_basic.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/waves/src/embed.html" beforeDir="false" afterPath="$PROJECT_DIR$/waves/src/embed.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/waves/src/station.js" beforeDir="false" afterPath="$PROJECT_DIR$/waves/src/station.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/waves/src/waves.js" beforeDir="false" afterPath="$PROJECT_DIR$/waves/src/waves.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/waves/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/waves/package.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -155,7 +149,7 @@
       <workItem from="1742575186970" duration="8123000" />
       <workItem from="1743364249485" duration="16000" />
       <workItem from="1743776325534" duration="22032000" />
-      <workItem from="1743849081632" duration="1848000" />
+      <workItem from="1743849081632" duration="4730000" />
     </task>
     <task id="LOCAL-00001" summary="Lets start over. (Not bumping version because thats stupid)">
       <option name="closed" value="true" />
@@ -181,7 +175,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742594326850</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="A somewhat working player!">
+      <option name="closed" value="true" />
+      <created>1743851316301</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1743851316301</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -202,6 +204,7 @@
     <MESSAGE value="Lets start over. (Not bumping version because thats stupid)" />
     <MESSAGE value="Add NPM boilerplate" />
     <MESSAGE value="We're playing audio!!!" />
-    <option name="LAST_COMMIT_MESSAGE" value="We're playing audio!!!" />
+    <MESSAGE value="A somewhat working player!" />
+    <option name="LAST_COMMIT_MESSAGE" value="A somewhat working player!" />
   </component>
 </project>
