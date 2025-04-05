@@ -5,13 +5,101 @@
     <title>waves ~ basic player</title>
 </head>
 <body>
+
+    <p>This page showcases the features of Waves.</p>
+    <hr>
+    <p>Stations:</p>
+    <ul id="stationlist"></ul>
+    <hr>
+    <p><button id="playpause-button">Play</button></p>
+    <p>State: <span id="waves-state">unknown</span></p>
+    <p>Now playing: <span id="waves-np">unknown</span></p>
+    <hr>
+    <p>Add a station:</p>
+    <p>
+        <label for="newstation_name">Name</label> <input type="text" id="newstation_name" />
+        <label for="newstation_url">URL</label> <input type="text" id="newstation_url" />
+        <button id="addandtune">Add & Tune</button>
+    </p>
+    <hr>
+    <p><label for="search">Search</label> <input type="search" name="search" id="search" /><button id="waves-search">Search</button> <span id="loading"></span></p>
+    <ul id="results"></ul>
+
     <script type="module">
         import Waves from "../src/waves.js";
         import {URLStation} from "../src/station.js";
 
+        import RadioBrowser from "../src/sources/radio-browser.js";
+
         const waves = new Waves();
-        waves.loadingSoundElem.src = "./assets/noise.wav";
-        waves.loadingSoundElem.load();
+        const radioBrowser = new RadioBrowser();
+
+        waves.addEventListener("stateChanged", ev => {
+            let label = "";
+
+            switch (ev.detail.state) {
+                case "playing":
+                    label = "Stop";
+                    break;
+                case "stopped":
+                    label = "Play";
+                    break;
+                case "loading":
+                    label = "Loading...";
+            }
+
+            document.getElementById("playpause-button").innerText = label;
+            document.getElementById("waves-state").innerText = ev.detail.state;
+            document.getElementById("waves-np").innerText = ev.detail.station.name;
+
+        });
+
+        waves.addEventListener("stationChanged", ev => {
+            document.getElementById("waves-np").innerText = ev.detail.station.name;
+        })
+
+        waves.addEventListener("stationAdded", ev => {
+            const li = document.createElement("li");
+            li.innerHTML = `<img style="vertical-align: middle" height="32" src="${ev.detail.station.icon}" /> ${ev.detail.station.name}: ${ev.detail.station.url} <button onclick="waves.setStation('${ev.detail.station.name}')">Tune</button>`;
+            document.getElementById("stationlist").appendChild(li);
+        });
+
+        document.getElementById("addandtune").addEventListener("click", _=>{
+            waves.addStation(
+                new URLStation(
+                    document.getElementById("newstation_name").value,
+                    document.getElementById("newstation_url").value,
+                )
+            )
+            waves.setStation(document.getElementById("newstation_name").value)
+            document.getElementById("newstation_name").value    = ""
+            document.getElementById("newstation_url").value     = ""
+        })
+
+        document.getElementById("playpause-button").addEventListener("click", _ => { waves.playpause() })
+
+        document.getElementById("waves-search").addEventListener("click", async _=> {
+            document.getElementById("loading").innerText = "Loading...";
+            const stations = await waves.searchStations(document.getElementById("search").value, [radioBrowser]);
+            const results = document.getElementById("results");
+            results.innerHTML = "";
+            stations.map(station => {
+                const li = document.createElement("li");
+                li.innerHTML = `<img style="vertical-align: middle" height="32" src="${station.icon}" /> ${station.name}: ${station.url} — ${station.lev}`;
+                const button = document.createElement("button");
+                button.innerText = "Tune";
+                button.addEventListener('click', _ => {
+                    console.log(station);
+                    waves.addStation(station);
+                    waves.setStation(station.name)
+                })
+                li.appendChild(button);
+                results.appendChild(li)
+            })
+            document.getElementById("loading").innerText = "";
+        })
+
+        waves.loadingSound = "./assets/noise.wav";
 
         const testStation = new URLStation("tilde", "https://tilde.radikan.byecorps.net/listen/tilde/radio.mp3");
         waves.addStation(testStation);
